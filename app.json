@@ -8,6 +8,20 @@
       "expo-router"
     ],
     "name": "travel-go",
-    "slug": "travel-go"
+    "slug": "travel-go",
+    "android": {
+      "package": "com.sabri_lamouchi.travelgo"
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "f48b1ea7-122c-4197-913a-58036eebdef0"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "travel-go"
+    }
   }
 }
