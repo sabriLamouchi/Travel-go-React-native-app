@@ -17,3 +17,9 @@ export const nearbyPlaces=[
         // description:"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a gall"
     }
 ]
+export const  searchDestination={
+    region:"bali",
+    hotels:"12682",
+    image_url:"https://cf.bstatic.com/xdata/images/region/150x150/50937.jpg?k=fb61fa507d82793ca79b9f01013f0233ac29b61d4a5bc597e1e85a3d51c59f38&o=",
+    label:"Bali, Indonesia", 
+}

@@ -141,7 +141,7 @@ export default function HomeScreen({navigation}){
                                     justifyContent:"center",
                                     borderRadius:30
                                 }
-                                } onPress={()=>{router.push('/(search)/123')}}>
+                                } onPress={()=>{router.push(`/(search)/${location}`)}}>
                                 <Text style={{
                                     color:COLORS.white,
                                     fontSize:SIZES.xSmall,

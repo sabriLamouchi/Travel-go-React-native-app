@@ -38,7 +38,7 @@ const TabLayout =() => {
                         initialRouteName={"home"}
                         screenOptions={({route})=>({
                             headerStyle:{backgroundColor:COLORS.lightWhite,},
-                            headerShown:true,
+                            headerShown:true,                                                                                                                           
                             headerShadowVisible:false,
                             headerTitle:()=>(
                                     <Text style={{marginLeft:20,fontFamily:FONT.bold,textAlign:"center"}}>{`hello ${data?.firstName} `}</Text>
