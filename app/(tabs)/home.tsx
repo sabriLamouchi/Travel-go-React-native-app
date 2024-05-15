@@ -1,7 +1,6 @@
 import { ActivityIndicator,Pressable,SafeAreaView, ScrollView, Text,  TouchableOpacity, View } from "react-native";
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 import { useEffect, useMemo, useState } from "react";
-import DatePicker from 'react-native-date-picker'
 import {router, Stack} from 'expo-router'
 import { Dimensions } from "react-native";
 import { useFormatDate } from "../../hooks/useFormatdate";
@@ -39,13 +38,6 @@ export default function HomeScreen({navigation}){
                 } catch (error) {
                     console.log(error)
                 }
-
-                // setData(res.data[0])
-                // if(res.data.lenght!=0)
-                //    res.data.forEach((el:any) => {
-                //         if(el.search_type=="region")
-                //             setData(el);
-                //    });
                 
             }
             else {
@@ -141,7 +133,9 @@ export default function HomeScreen({navigation}){
                                     justifyContent:"center",
                                     borderRadius:30
                                 }
-                                } onPress={()=>{router.push(`/(search)/${location}`)}}>
+                                } onPress={()=>{ if(location){
+                                    router.push(`/(search)/${location}`)
+                                }}}>
                                 <Text style={{
                                     color:COLORS.white,
                                     fontSize:SIZES.xSmall,

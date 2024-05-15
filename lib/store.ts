@@ -22,7 +22,6 @@ export const AuthStore=new Store<authStoreProps>({
 })
 
 const unsub=onAuthStateChanged(auth,(user)=>{
-    console.log("onAuthStateChanged",user);
     AuthStore.update((store)=>{
         store.user=user; 
         store.initialized=true;

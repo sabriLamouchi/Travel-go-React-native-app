@@ -23,3 +23,9 @@ export const  searchDestination={
     image_url:"https://cf.bstatic.com/xdata/images/region/150x150/50937.jpg?k=fb61fa507d82793ca79b9f01013f0233ac29b61d4a5bc597e1e85a3d51c59f38&o=",
     label:"Bali, Indonesia", 
 }
+
+export const  hotel={
+    name:"bali hotel ",
+    photoUrls:"https://plus.unsplash.com/premium_photo-1682097451501-eeb21805b99e?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    reviewScore:4.8
+}

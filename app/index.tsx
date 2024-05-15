@@ -10,7 +10,7 @@ export default function Index() {
 
     const navigationState=useRootNavigationState();
     const {initialized,isLoggedIn}=AuthStore.useState();
-
+    console.log(initialized)
     useEffect(()=>{
         if(!navigationState?.key || !initialized)return;
 
