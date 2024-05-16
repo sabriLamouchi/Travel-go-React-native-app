@@ -3,10 +3,13 @@ import { styles } from './NearbPlaceCard.style';
 import { images,icons, COLORS, FONT, SIZES } from '../../../constants';
 import { useCallback, useEffect, useState } from 'react';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6'
+import ReadMore from '../../globals/read-more';
+import { useTabBarScroll } from '../../../hooks/useTabBarScroll';
 const NearbPlaceCard = ({hotels,country,image_url,description,region}) => {
     const [textShown,setTextShown]=useState(false);
     const [lengthMore,setLengthMore]=useState(false);
     const [numLines,setNumLines]=useState(undefined);
+    const {onScroll}=useTabBarScroll();
     const toggleNumberOfLines=()=>{
         setTextShown(!textShown);
     }
@@ -55,7 +58,7 @@ const NearbPlaceCard = ({hotels,country,image_url,description,region}) => {
                                         onPress={toggleNumberOfLines}
                                         style={{fontFamily:FONT.regular,fontSize:SIZES.xSmall}} 
                                         >
-                                            {description}
+                                            {/* {description}
                                             {
                                                 lengthMore ?
                                                 <Text
@@ -68,7 +71,10 @@ const NearbPlaceCard = ({hotels,country,image_url,description,region}) => {
                                                     }
                                                 </Text>
                                                 : null 
-                                            }
+                                            } */}
+                                            <ReadMore maxChar={50} >
+                                                {description}
+                                            </ReadMore>
                                         </Text>
                                 </View>
                                 :

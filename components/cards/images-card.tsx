@@ -14,6 +14,7 @@ const ImagesCard = ({mainImage,number}: Props) => {
   return (
     <View style={styles.container}>
       <Image source={{uri:mainImage}} style={{width:"100%",height:"100%",borderRadius:30}} />
+      <View style={{position:"absolute",width:"100%",height:"100%",backgroundColor:COLORS.gray,borderRadius:30,opacity:0.5}} />
       <Text style={{position:"absolute",color:COLORS.white,fontWeight:"700"}}>
         +{number}
       </Text>

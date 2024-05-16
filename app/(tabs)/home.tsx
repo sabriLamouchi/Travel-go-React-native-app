@@ -12,6 +12,7 @@ import NearbyPlaces from "../../components/nearby/NearbyPlaces";
 import { styles } from "../../screens/Home.style";
 import DateTimePicker from "@react-native-community/datetimepicker"
 import useSearchDistination from "../../hooks/useSearchDistination";
+import { useTabBarScroll } from "../../hooks/useTabBarScroll";
 const ScreenDimensions=Dimensions.get('screen');
 
 

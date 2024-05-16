@@ -7,11 +7,13 @@ import { useEffect, useState } from 'react';
 import { auth, firestore_db } from '../../firebaseConfig';
 import HeaderBtn from '../../components/header/HeaderBtn';
 import { COLORS, FONT, images, SIZES } from '../../constants';
+import { useTabBarScroll } from '../../hooks/useTabBarScroll';
 //Screen names
 const TabLayout =() => {
     const router =useRouter();
     const segments=useSegments();
     const [data,setData]=useState(null);
+    const {status}=useTabBarScroll();
     async function getUserData(){
         const docRef=doc(firestore_db,'users',auth.currentUser.uid);
         try {
@@ -54,6 +56,8 @@ const TabLayout =() => {
                                 borderRadius:30,
                                 backgroundColor:COLORS.secondary,
                                 position:"absolute",
+                                bottom:0,
+                                animate:true
                                 
                             },
                             tabBarIcon:({color,focused,size})=>{
@@ -68,6 +72,9 @@ const TabLayout =() => {
                                 
                             },
                             tabBarShowLabel:false,
+                            tabBarHideOnKeyboard:true,
+                            
+                            
                         })}
                         
                         

@@ -85,12 +85,15 @@ const SearchedDistination = (props: Props) => {
           </ScrollView>
           <View style={{width:ScreenWidth}}>
             <AnimatPager style={{justifyContent:"center",alignItems:"center",width:'auto',height:ScreenHeight}} initialPage={0} ref={pagerViewRef}>
-              <View style={styles.page} key="1">
+              <ScrollView contentContainerStyle={styles.page} key="1">
                 <View style={{marginHorizontal:30,marginVertical:10,flexDirection:"row",gap:20,alignItems:"center"}}>
                   <HotelCard hotelImage={hotel.photoUrls} hotelName={hotel.name} reviewScore={hotel.reviewScorex} />
                   {data && <ImagesCard mainImage={data.results[0].urls.regular} number={10} />}
                 </View>
-              </View>
+                <View style={{marginHorizontal:10}} >
+                  <Text style={{fontFamily:FONT.bold,fontSize:SIZES.small}} > Details </Text>
+                </View>
+              </ScrollView>
               <View style={styles.page} key="2">
                 <Text>Second page</Text>
               </View>
