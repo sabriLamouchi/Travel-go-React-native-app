@@ -252,7 +252,7 @@ export default function HomeScreen({navigation}){
     }
     return( 
         <SafeAreaView style={{flex:1,backgroundColor:COLORS.lightWhite}}>
-        <Toasts  />
+        <Toasts/>
             <View style={styles.searchContainer}>
                 {
                     isSearching &&

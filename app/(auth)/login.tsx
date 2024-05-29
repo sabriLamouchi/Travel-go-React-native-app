@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View,Text, SafeAreaView, TextInput, StyleSheet, TouchableOpacity, Pressable, ScrollView, Dimensions, ViewStyle ,KeyboardAvoidingView, Platform, ActivityIndicator} from 'react-native';
-import { auth, firestore_db } from '../../firebaseConfig';
 import { COLORS, FONT, SIZES } from '../../constants';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { validationSchema } from '../../hooks/validationSchema';
-import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'expo-router';
 import { appSignIn } from '../../lib/store';
+import {useFormik} from 'formik'
+import {toast, ToastPosition, Toasts } from '@backpackapp-io/react-native-toast';
+import { ToastErrorTheme } from '../../constants/theme';
 const screenDimension=Dimensions.get('screen');
 const Login = () => { 
     const router=useRouter();
@@ -14,26 +15,55 @@ const Login = () => {
     const [email,setEmail]=useState("");
     const [password,setPassword]=useState(""); 
     const [isSubmit,setIsSubmit]=useState(false);
-    const handleSubmit=async ()=>{
-        if(validationSchema()){
+
+    const formik = useFormik({
+        initialValues:{email:"",password:""},
+        validationSchema: validationSchema(), // validate the form data
+        validateOnChange: false,
+        onSubmit: async (formValue) => {
             try {
                 setIsSubmit(true);
-                await appSignIn(email,password).then(()=>{
-                    setIsSubmit(false)
-                    router.replace("/(tabs)/home");
-                    
-                })
+                const res=await appSignIn(formValue.email,formValue.password);
+                if(res?.status){
+                    console.log("go in")
+                }
+                else{
+                    console.log("error",res)
+                    toast("error", {
+                        duration: 4000,
+                        position: ToastPosition.TOP,
+                        icon: '📣',
+                        styles: {
+                        view:{
+                            ...ToastErrorTheme,
+                            marginTop:100,
+                        },
+                        text:{
+                            fontFamily:FONT.medium
+                        },
+                        },
+
+                    });
+                }
+                
             } catch (error) {
-                console.log("error",error);
+                console.log("Login-error: ",error);
             }
             finally{
                 setIsSubmit(false);
             }
-        }
-    
-    }
+        },
+      })
+
     return (
-        <KeyboardAvoidingView style={{flex:1,backgroundColor:COLORS.primary,gap:50}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
+        <>
+        <Toasts overrideDarkMode={true} extraInsets={
+            {
+                bottom:100
+            }
+        } />
+        <KeyboardAvoidingView style={{flex:1,backgroundColor:COLORS.primary,gap:50,zIndex:-1}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
+            
             <View style={{flexDirection:"row",justifyContent:"space-around",alignItems:"center",padding:10,marginTop:20}}>
                     <TouchableOpacity style={{flexDirection:'row',justifyContent:"center",alignItems:"center"}}
                         onPress={()=>router.back()} >
@@ -53,24 +83,25 @@ const Login = () => {
                     <Text style={{fontFamily:FONT.bold,fontSize:SIZES.xLarge,color:COLORS.secondary}} >Login</Text>
                 </View>
                 <View style={{justifyContent:"center",alignItems:"center",width:"100%",height:"auto" ,gap:45 }} >
-
-                    <View style={{width:"100%",alignItems:"center"}}>
-                        <TextInput placeholder='Email' blurOnSubmit={true}  onChangeText={(text)=>setEmail(text)} style={styles.textInput('email',"")} />
+                    <View style={{width:"80%"}}>
+                        <TextInput
+                            placeholder='Email'  blurOnSubmit={true} onBlur={formik.handleBlur('email')} onChangeText={(text)=>formik.setFieldValue('email',text)} style={{...styles.textInput('email',formik.errors.email,formik.touched.email),width:"100%"}} />
+                        {formik.errors.email && formik.touched.email ? <Text style={{color:"red",position:"relative",left:10,fontSize:SIZES.xSmall,width:"80%"}}>{formik.errors.email}</Text>:null}
                     </View>
 
-                    <View style={{alignItems:"center",width:"100%"}}>
-                        <View style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
-                            <TextInput placeholder='password'  blurOnSubmit={true} secureTextEntry={showPassword} onChangeText={(text)=>setPassword(text)} style={{...styles.textInput('password',""),borderBottomLeftRadius:10,borderTopLeftRadius:10,}} />
+                     <View style={{width:"100%"}}>
+                        <KeyboardAvoidingView style={{flexDirection:"row",justifyContent:"center"}}>
+                            <TextInput 
+                                placeholder='password' blurOnSubmit={true} onBlur={formik.handleBlur('password')} secureTextEntry={showPassword} onChangeText={(text)=>formik.setFieldValue('password',text)}  nativeID='password' style={{...styles.textInput('password',formik.errors.password,formik.touched.password),borderBottomLeftRadius:10,borderTopLeftRadius:10}} />
 
-                            <Pressable onPress={()=>setShowPassword(!showPassword)} style={{alignSelf:"center",backgroundColor:COLORS.lightWhite,height:"100%",padding:5,flexDirection:"row",borderTopEndRadius:10,borderBottomRightRadius:10}} >
+                            <Pressable 
+                                onPress={()=>setShowPassword(!showPassword)} style={{alignSelf:"center",backgroundColor:COLORS.lightWhite,height:"100%",padding:5,flexDirection:"row",borderTopEndRadius:10,borderBottomRightRadius:10}} >
                                 <Ionicons name={showPassword ?"eye-off": "eye"} color={COLORS.dark} size={SIZES.medium} style={{alignSelf:"center"}} />
                             </Pressable>
-                        </View>
+                        </KeyboardAvoidingView>
+                        {formik.errors.password && formik.touched.password ? <Text style={{color:"red",position:"relative",left:50,fontSize:SIZES.xSmall,width:"80%"}}>{formik.errors.password}</Text>:null}
                     </View>
-
-
-
-                    <TouchableOpacity onPress={handleSubmit}  style={styles.submitButton} disabled={isSubmit} >
+                    <TouchableOpacity onPress={formik.submitForm}  style={styles.submitButton} disabled={isSubmit} >
                         {
                             isSubmit ? (
                                 <ActivityIndicator size="small" color={COLORS.white} />
@@ -101,6 +132,8 @@ const Login = () => {
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>
+        </>
+        
     );
 };
 
@@ -112,8 +145,8 @@ export type StylesType={
 }
 
 const styles=StyleSheet.create<StylesType| any >({
-    textInput:(type:any,error:any)=>({
-        width:type!="password"? "80%": "72%",
+    textInput:(type: string,error: any,touched:any)=>({
+        width:type!="password"? "80%": "70%",
         height:50,
         backgroundColor:COLORS.lightWhite,
         fontSize:SIZES.small,
@@ -121,8 +154,8 @@ const styles=StyleSheet.create<StylesType| any >({
         color:COLORS.dark,
         borderRadius:type!="password"? 10 : 0,
         padding:5,
-        borderWidth:error ? 3: 0,
-        borderColor:error ? COLORS.red: "#FFF",
+        borderWidth: error && touched ? 2: 0 ,
+        borderColor : error && touched ? "#D04848": ""
     }),
     submitButton:{
         width:"40%",

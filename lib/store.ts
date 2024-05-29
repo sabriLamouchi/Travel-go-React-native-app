@@ -30,20 +30,19 @@ export const appSignIn=async(email:string,password:string)=>{
     try {
         let user=null;
         await signInWithEmailAndPassword(auth,email,password).then(async ()=>{
+            console.log("sign in:",auth.currentUser)
                 const docSnapsot=await getDoc(doc(firestore_db,'users',auth.currentUser.uid));
                 user=docSnapsot.data();
             })
-            .catch((error)=>{
-                alert("user not available with this informations");
+            .then(()=>{
+                AuthStore.update((store)=>{
+                    store.user=user;
+                    store.isLoggedIn=user ? true:false;
+                });
             })
-        AuthStore.update((store)=>{
-            store.user=user;
-            store.isLoggedIn=user ? true:false;
-
-        });
-        return user ?? {user:auth.currentUser};
+        return user && {status:true};
     } catch (error) {
-        return {error:error}
+        return{status:false}
     }
 }
 
@@ -73,13 +72,15 @@ try {
         })}).then(async ()=>{
             const docSnapsot=await getDoc(doc(firestore_db,'users',auth.currentUser.uid));
             user=docSnapsot.data();
+        }).then(()=>{
+            AuthStore.update((store)=>{
+                store.user=user;
+                store.isLoggedIn=true;
+        
+            });
         })
-    AuthStore.update((store)=>{
-        store.user=user;
-        store.isLoggedIn=true;
 
-    });
-    return user ?? {user:auth.currentUser};
+    return user && {user:auth.currentUser};
 } catch (error) {
     return {error:error}
 }
