@@ -6,7 +6,7 @@ const ScreenWidth=Dimensions.get("screen").width
 type Props = {
     hotelImage:string
     hotelName:string,
-    reviewScore:number
+    reviewScore?:number
 }
 export interface IImageSlider {
     ImageStyle?: StyleProp<ImageStyle>;
@@ -20,9 +20,9 @@ const HotelCard = ({hotelImage,hotelName,reviewScore}: Props) => {
         <Text style={{fontFamily:FONT.regular,fontSize:SIZES.small,fontWeight:"700",textAlign:"center",overflow:"hidden"}}>
              {hotelName}
         </Text>
-        <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center",gap:10}}>
+        <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center",gap:3}}>
             <Text style={{fontSize:SIZES.xSmall,color:COLORS.lightSecondary}}> 
-                score
+                {reviewScore}
             </Text>
             <Ionicons name="star" size={20} color={COLORS.yellow} />
         </View>

@@ -26,7 +26,7 @@ export default ImagesCard
 
 const styles = StyleSheet.create({
     container:{
-        width:ScreenWidth/3,
+        width:ScreenWidth/2.8,
         height:150,
         position:"relative",
         justifyContent:"center",

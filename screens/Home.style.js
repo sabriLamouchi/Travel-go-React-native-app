@@ -4,7 +4,8 @@ import { COLORS,SIZES,FONT } from "../constants";
 
 export const styles=StyleSheet.create({
     searchContainer:{
-        flex:1,
+        // flex:1,
+        zIndex:-1
     },
     nearbyPlacesContainer: {
         backgroundColor:COLORS.primary,
@@ -12,7 +13,7 @@ export const styles=StyleSheet.create({
         borderTopRightRadius:30,
         overflow:"hidden",
         flex:1,
-        height:"auto"
+        height:"100%"
     },
     ActivityIndicator: {
         width:"100%",
@@ -24,6 +25,18 @@ export const styles=StyleSheet.create({
         overflow:"hidden",
         justifyContent:"center",
         alignItems:"center"
+    },
+    loadingScreen:{
+        position:"absolute",
+        justifyContent:"center",
+        alignItems:"center",
+        width:"100%",
+        height:"100%",
+        zIndex:1,
+        
+    },
+    toastViewStyle:{
+        backgroundColor:COLORS.red,
     }
 
 })

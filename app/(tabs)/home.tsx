@@ -1,5 +1,4 @@
 import { ActivityIndicator,Pressable,SafeAreaView, ScrollView, Text,  TouchableOpacity, View } from "react-native";
-import {createNativeStackNavigator} from '@react-navigation/native-stack'
 import { useEffect, useMemo, useState } from "react";
 import {router, Stack} from 'expo-router'
 import { Dimensions } from "react-native";
@@ -11,8 +10,13 @@ import ButtonDatePicker from "../../components/ButtonDatePicker/ButtonDatePicker
 import NearbyPlaces from "../../components/nearby/NearbyPlaces";
 import { styles } from "../../screens/Home.style";
 import DateTimePicker from "@react-native-community/datetimepicker"
-import useSearchDistination from "../../hooks/useSearchDistination";
-import { useTabBarScroll } from "../../hooks/useTabBarScroll";
+import { GetDistinationId, GetSearchHotels, useSearchedData } from "../../lib/store";
+import { useMutation } from "@tanstack/react-query";
+import { validateSearchDistinationSchema } from "../../hooks/validationSchema";
+import { format, parseISO } from 'date-fns';
+import { BlurView } from "expo-blur";
+import { toast, ToastPosition, Toasts } from '@backpackapp-io/react-native-toast';
+import { ToastErrorTheme, ToastSuccessTheme } from "../../constants/theme";
 const ScreenDimensions=Dimensions.get('screen');
 
 
@@ -22,36 +26,44 @@ export default function HomeScreen({navigation}){
     const[arrival,setArrival]=useState(false);
     const[departure,setDeparture]=useState(false);
     const [date,setDate]=useState("")
-    const [arrivalDate,setArrivalDate]=useState<Date | null>(new Date(0))
+    const [arrivalDate,setArrivalDate]=useState<Date | null >(new Date(0))
     const [departureDate,setDepartureDate]=useState<Date | null>(new Date(0))
-    const [data,setData]=useState(null)
+    const [adults,setAdults]=useState<string>("")
+    const [isSearching,setIsSearching]=useState<boolean>(false);
+    // const [data,setData]=useState(null)
+    const{setData,setDestId,dest_id,data,destination,setDestination}=useSearchedData()
     //InputState//
-    const [location,setLocation]=useState("");
-    useMemo(async ()=>
-        {
-            if(location.length!=0){
+    const [location,setLocation]=useState<string>("");
+    // useMemo(async ()=>
+    //     {
+    //         if(location!=null){
                 
-                try {
-                    const {res}=await useSearchDistination({query:location});
-                    console.log([...res.data])
-                    console.log(location)
-                    return res
-                } catch (error) {
-                    console.log(error)
-                }
+    //             if(location.length>1){
+    //                 try {
+    //                     // const {res}=await useSearchDistination({query:location});
+    //                     // console.log([...res.data])
+    //                     // console.log(location)
+    //                     // return res
+    //                 } catch (error) {
+    //                     console.log(error)
+    //                 }
+    //             }else {
+    //                 alert("please enter the location!!");
+    //                 return null
+    //             }
                 
-            }
-            else {
-                alert("please enter the location!!");
-                return null
-            }
-        }
-    ,[location])
+    //         }
+    //         else {
+    //             alert("please enter the location!!");
+    //             return null
+    //         }
+    //     }
+    // ,[location])
 
 
     const handlePickDate=()=>{
         setPickDate(!pickDate);
-        console.log(arrivalDate,departureDate)
+        console.log(format(arrivalDate,"yyyy-MM-dd"),format(departureDate,"yyyy-MM-dd"))
         if(arrivalDate.getFullYear()!=1970 && departureDate.getFullYear()!=1970) 
             setDate(changeDate(useFormatDate(arrivalDate),useFormatDate(departureDate)));
     };
@@ -67,11 +79,187 @@ export default function HomeScreen({navigation}){
         return  ArrDate+" - "+DepDate;
     }
 
-  
-    return( 
-    <SafeAreaView style={{flex:1,backgroundColor:COLORS.lightWhite}}>
+    //ditination Providers Click:
+    const {mutateAsync:getDistinationIdMutaion}=useMutation({
+        mutationFn:GetDistinationId,
+        onError(error, variables, context) {
+            alert("there is an error to get destination id !!: "+error.message)
+        },
+    })
+    const {mutateAsync:getHotelsDataMutation}=useMutation({
+        mutationFn:GetSearchHotels,
+        onError(error, variables, context) {
+            alert("there is an error in hotels api !!: "+error.message)
+        },
+    })
 
+    const handleSearchDistination=async()=>{
+        // Type inference in action
+        const arrivalFinalDate=format(arrivalDate,"yyyy-MM-dd");
+        const departureFinalDate=format(departureDate,"yyyy-MM-dd")
+        const result=validateSearchDistinationSchema.safeParse({
+            location:location,
+            arrival_date:arrivalFinalDate,
+            departure_date:departureFinalDate,
+            adults:adults
+        })
+        console.log("sibon",adults)
+
+        if(result?.success){
+            try{
+                setIsSearching(true);
+                if(destination!=location){
+                    await getDistinationIdMutaion(location).then(async (res:string)=>{
+                        console.log("dstination_id",res);
+                        if(res!=null){
+                            setDestination(location)
+                            setDestId(res);
+                            await getHotelsDataMutation(
+                                {dest_id:res,
+                                arrival_date:arrivalFinalDate,
+                                departure_date:departureFinalDate,
+                                adults:adults}
+                            ).then((res)=>{
+                                console.log("hotels",res)
+                                if(res!=null){
+                                    setData(res)
+                                    alert("hotels get with success!!");
+                                }
+                                else{
+                                    alert("there are no hotels with this inputs ,please check your arrival and deaprture date!!")
+                                    toast("there are no hotels with this inputs ,please check your arrival and deaprture date!!", {
+                                        duration: 4000,
+                                        position: ToastPosition.TOP,
+                                        icon: '📣',
+                                        styles: {
+                                        view:ToastErrorTheme,
+                                        text:{
+                                            fontFamily:FONT.medium
+                                        }
+                                        },
+                                    });
+                                    toast("please check your arrival and deaprture date!!",{
+                                        duration: 6000,
+                                        position: ToastPosition.TOP,
+                                        icon: '📣',
+                                        styles: {
+                                        view:ToastErrorTheme,
+                                        text:{
+                                            fontFamily:FONT.medium
+                                        }
+                                        },
+                                    });
+                                }
+                            })
+                        }
+                        else{
+                            toast("this destination is not available", {
+                                duration: 4000,
+                                position: ToastPosition.TOP,
+                                icon: '📣',
+                                styles: {
+                                view:ToastErrorTheme,
+                                text:{
+                                    fontFamily:FONT.medium
+                                }
+                                },
+                            });
+                        }
+                        
+                    })
+                }else{
+                    //search hotels with same destination it stored .
+                    console.log("searched from cache");
+                    if(data==null || data?.length ==0){
+                        await getHotelsDataMutation(
+                            {dest_id,
+                            arrival_date:arrivalFinalDate,
+                            departure_date:departureFinalDate,
+                            adults:adults}
+                        ).then((res)=>{
+                            console.log("hotels",res)
+                            if(res==null || res?.length==0){
+                                toast("there are no hotels with this inputs ,please check your arrival and deaprture date!!", {
+                                    duration: 4000,
+                                    position: ToastPosition.TOP,
+                                    icon: '📣',
+                                    styles: {
+                                    view:ToastErrorTheme,
+                                    text:{
+                                        fontFamily:FONT.medium
+                                    }
+                                    },
+                                });
+                                toast("please check your arrival and deaprture date!!",{
+                                    duration: 6000,
+                                    position: ToastPosition.TOP,
+                                    icon: '📣',
+                                    styles: {
+                                    view:ToastErrorTheme,
+                                    text:{
+                                        fontFamily:FONT.medium
+                                    }
+                                    },
+                                });
+                            }
+                            else{
+                                setData(res)
+                                alert("hotels get with success!!");
+                            }
+                        })
+                    }else{
+                        toast("search get with success!!",{
+                            duration: 6000,
+                            position: ToastPosition.TOP,
+                            icon: '📣',
+                            styles: {
+                            view:ToastSuccessTheme,
+                            text:{
+                                fontFamily:FONT.medium
+                            }
+                            },
+                        });
+                    }
+                    
+                }
+               
+            }catch(error){
+                console.log("error",error)
+                throw error
+            }
+            finally{
+                setIsSearching(false);
+            }
+        }
+        else{
+            console.log()
+            result.error.issues.forEach((err,index)=>{
+                toast(err.message, {
+                    duration: 2000+(index*1000),
+                    position: ToastPosition.TOP,
+                    icon: "📣",
+                    styles: {
+                    view:ToastErrorTheme,
+                    text:{
+                        fontFamily:FONT.medium
+                    }
+                    },
+                });
+            })
+
+        }
+        
+    }
+    return( 
+        <SafeAreaView style={{flex:1,backgroundColor:COLORS.lightWhite}}>
+        <Toasts  />
             <View style={styles.searchContainer}>
+                {
+                    isSearching &&
+                    <BlurView intensity={10} tint="light" style={styles.loadingScreen} >
+                    <ActivityIndicator size={"large"} color={COLORS.secondary} />
+                </BlurView> 
+                }
                 <View style={{width:"100%",height:ScreenDimensions.height/2.6}}>
                     <ScrollView  contentContainerStyle={{rowGap:15,height:"auto",paddingTop:"10%"}}  showsVerticalScrollIndicator={false}  >
 
@@ -108,7 +296,7 @@ export default function HomeScreen({navigation}){
                                                 testID="dateTimePicker"
                                                 value={departureDate}
                                                 mode={"date"}
-                                                is24Hour={true}
+                                                is24Hour={false}
                                                 onChange={(event,departureDate)=>{
                                                     setDeparture(false)
                                                     setDepartureDate(departureDate)
@@ -123,7 +311,7 @@ export default function HomeScreen({navigation}){
                                     
                             }
                             
-                            <Textinput icon={"person"} placeholder="Adults"/>
+                            <Textinput icon={"person"} placeholder="Adults" setText={(text:string)=>setAdults(text)} value={adults} />
                             <TouchableOpacity style={ 
                                 {
                                     backgroundColor:COLORS.green,
@@ -134,9 +322,13 @@ export default function HomeScreen({navigation}){
                                     justifyContent:"center",
                                     borderRadius:30
                                 }
-                                } onPress={()=>{ if(location){
-                                    router.push(`/(search)/${location}`)
-                                }}}>
+                                }
+                                disabled={isSearching} 
+                                onPress={async ()=>{
+                                    await handleSearchDistination().then(()=>{
+                                    })
+                                    
+                                }}>
                                 <Text style={{
                                     color:COLORS.white,
                                     fontSize:SIZES.xSmall,
@@ -146,7 +338,8 @@ export default function HomeScreen({navigation}){
                             </TouchableOpacity>
                         </ScrollView>
                  </View>
-                 <View style={styles.nearbyPlacesContainer}>
+            </View>
+            <View style={styles.nearbyPlacesContainer}>
                     {isLoading?
                         <ActivityIndicator color={COLORS.primary}  size="large" style={{position:"relative",top:"20%"}} />
                     : 
@@ -154,9 +347,7 @@ export default function HomeScreen({navigation}){
                     }
                     
                  </View>
-               
-
-            </View>
         </SafeAreaView>
+
     );
 }

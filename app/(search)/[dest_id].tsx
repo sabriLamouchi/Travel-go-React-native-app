@@ -11,6 +11,8 @@ import { Animated } from 'react-native'
 import HotelCard from '../../components/cards/hotel-card'
 import { hotel } from '../../constants/data'
 import ImagesCard from '../../components/cards/images-card'
+import ReadMore from '../../components/globals/read-more'
+import Button from '../../components/globals/button'
 type Props = {}
 const ScreenWidth=Dimensions.get("screen").width
 const ScreenHeight=Dimensions.get("screen").height
@@ -83,15 +85,18 @@ const SearchedDistination = (props: Props) => {
               )
           })}
           </ScrollView>
-          <View style={{width:ScreenWidth}}>
+          <View style={{width:ScreenWidth,position:"relative"}}>
             <AnimatPager style={{justifyContent:"center",alignItems:"center",width:'auto',height:ScreenHeight}} initialPage={0} ref={pagerViewRef}>
-              <ScrollView contentContainerStyle={styles.page} key="1">
+              <ScrollView contentContainerStyle={styles.page}  showsVerticalScrollIndicator={false} key="1">
                 <View style={{marginHorizontal:30,marginVertical:10,flexDirection:"row",gap:20,alignItems:"center"}}>
-                  <HotelCard hotelImage={hotel.photoUrls} hotelName={hotel.name} reviewScore={hotel.reviewScorex} />
+                  <HotelCard hotelImage={hotel.photoUrls} hotelName={hotel.name} reviewScore={hotel.reviewScore} />
                   {data && <ImagesCard mainImage={data.results[0].urls.regular} number={10} />}
                 </View>
                 <View style={{marginHorizontal:10}} >
                   <Text style={{fontFamily:FONT.bold,fontSize:SIZES.small}} > Details </Text>
+                  <ReadMore maxChar={100} textStyle={{marginTop:10,fontFamily:FONT.light,fontSize:SIZES.small,marginLeft:10}}  >
+                     {hotel.accessibilityLabel}
+                  </ReadMore>
                 </View>
               </ScrollView>
               <View style={styles.page} key="2">
@@ -101,6 +106,9 @@ const SearchedDistination = (props: Props) => {
                 <Text>Third page</Text>
               </View>
             </AnimatPager>
+            <Button style={{width:"30%",height:50,alignSelf:"center",bottom:380,position:"absolute"}} textStyle={{fontSize:SIZES.medium}} >
+                  Continue
+                </Button>
           </View>
         </View>
       </View>
@@ -135,7 +143,9 @@ const styles = StyleSheet.create<any>({
     width:ScreenWidth,
   },
   page:{
-    width:"100%"
+    width:"100%",
+    paddingBottom:400,
+    position:"relative"
   },
   pageButton:(index:number,currentPageIndex:number)=>({
     width:100,
@@ -146,6 +156,6 @@ const styles = StyleSheet.create<any>({
     backgroundColor:index == currentPageIndex ? COLORS.lightSecondary : COLORS.white,
   }),
   textButton:(index:number,currentPageIndex:number)=>({
-    color:index == currentPageIndex ? COLORS.white : COLORS.primary,
+    color:index == currentPageIndex ? COLORS.white : COLORS.dark,
   })
 })

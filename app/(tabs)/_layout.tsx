@@ -1,5 +1,5 @@
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import {Redirect, Tabs, useRouter, useSegments} from 'expo-router'
+import {Redirect, Stack, Tabs, useRouter, useSegments} from 'expo-router'
 //screens
 import { SafeAreaView, StyleSheet, Text } from 'react-native';
 import { doc, getDoc } from 'firebase/firestore';
@@ -8,7 +8,9 @@ import { auth, firestore_db } from '../../firebaseConfig';
 import HeaderBtn from '../../components/header/HeaderBtn';
 import { COLORS, FONT, images, SIZES } from '../../constants';
 import { useTabBarScroll } from '../../hooks/useTabBarScroll';
-//Screen names
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+// Create a client
+const queryClient = new QueryClient()
 const TabLayout =() => {
     const router =useRouter();
     const segments=useSegments();
@@ -35,7 +37,7 @@ const TabLayout =() => {
         getUserData()
     },[])
     return (
-        
+        <QueryClientProvider client={queryClient} >
                     <Tabs
                         initialRouteName={"home"}
                         screenOptions={({route})=>({
@@ -82,6 +84,7 @@ const TabLayout =() => {
                             <Tabs.Screen  name="home"  />
                             <Tabs.Screen options={{headerShown:false}} name="profile"  />
                     </Tabs>
+        </QueryClientProvider>
     );
 };
 

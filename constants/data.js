@@ -27,5 +27,6 @@ export const  searchDestination={
 export const  hotel={
     name:"bali hotel ",
     photoUrls:"https://plus.unsplash.com/premium_photo-1682097451501-eeb21805b99e?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    reviewScore:4.8
+    reviewScore:4.8,
+    accessibilityLabel:"The Taj Mahal Tower, Mumbai. 5 out of 5 stars. 9.0 Superb 4887 reviews. ‎Colaba‬ • ‎11 miles from centre‬ ‎Travel Sustainable‬ ‎This property has free cots available‬. 1 bed. 24190 INR. Includes taxes and charges. Free cancellation"
 }

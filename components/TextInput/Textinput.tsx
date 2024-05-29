@@ -17,14 +17,7 @@ const Textinput = ({icon,placeholder,handlerEvent,type,setText,value}:TextInputP
             {/* <Image source={icon} resizeMode="cover" style={styles.image} /> */}
             <Ionicons name={icon} size={SIZES.medium} color={COLORS.primary} />
             {
-                type!="location"? (
-                    
-                    <TextInput placeholder={placeholder} style={styles.textInput} />
-                    )
-                    :
-                    (
-                        <TextInput placeholder={placeholder} style={styles.textInput} onEndEditing={(e:any)=>setText(e.nativeEvent.text)} /*onChangeText={(text)=>setText(text)}*/ />
-                    )
+                <TextInput placeholder={placeholder} style={styles.textInput} onEndEditing={(e:any)=>setText(e.nativeEvent.text)} />
             }
             
             

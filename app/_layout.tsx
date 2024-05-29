@@ -2,10 +2,9 @@
 import { Stack ,SplashScreen, Slot} from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {useFonts} from 'expo-font'
-import { auth } from "../firebaseConfig";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { RootSiblingParent } from 'react-native-root-siblings';
 SplashScreen.preventAutoHideAsync();
-
 
 
 const Layout=()=>{
@@ -25,9 +24,12 @@ const Layout=()=>{
         if(!fontsLoaded) return null;
 
         return (
-            <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootview}>
-                <Stack  screenOptions={{headerShown:false}}/>
-            </GestureHandlerRootView>
+                <RootSiblingParent>
+                    <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootview}>
+                        <Stack  screenOptions={{headerShown:false}}/>
+                    </GestureHandlerRootView>
+                </RootSiblingParent>
+            
          
         );
 };

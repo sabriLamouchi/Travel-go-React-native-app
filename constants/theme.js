@@ -9,7 +9,7 @@ const COLORS={
 
     dark:"#030014",
     gray:'#D9D9D9',
-    red:"#D04848",
+    red:"#8A1C00",
 }
 
 const FONT={
@@ -27,6 +27,7 @@ const SIZES={
     xLarge:46,
 }
 
+
 const SHADOWS={
     medium:{
         shadowColor:'#3D4652',
@@ -39,4 +40,11 @@ const SHADOWS={
         elevation:2,
     }
 }
-export{COLORS,SIZES,SHADOWS,FONT};
+
+const ToastErrorTheme= {
+    backgroundColor:COLORS.red,
+}
+const ToastSuccessTheme= {
+    backgroundColor:COLORS.green,
+}
+export{COLORS,SIZES,SHADOWS,FONT,ToastErrorTheme,ToastSuccessTheme};
