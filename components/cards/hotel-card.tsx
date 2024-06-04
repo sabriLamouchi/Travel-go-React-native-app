@@ -17,7 +17,7 @@ const HotelCard = ({hotelImage,hotelName,reviewScore}: Props) => {
     <TouchableOpacity style={styles.container}>
       <Image source={{uri:hotelImage}} style={{width:"100%",height:"100%",borderRadius:30}} resizeMode='cover' />
       <View style={styles.label}>
-        <Text style={{fontFamily:FONT.regular,fontSize:SIZES.small,fontWeight:"700",textAlign:"center",overflow:"hidden"}}>
+        <Text style={{fontFamily:FONT.regular,fontSize:SIZES.xSmall,fontWeight:"700",textAlign:"center",overflow:"hidden"}}>
              {hotelName}
         </Text>
         <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center",gap:3}}>

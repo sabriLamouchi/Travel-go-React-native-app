@@ -13,6 +13,8 @@ import { hotel } from '../../constants/data'
 import ImagesCard from '../../components/cards/images-card'
 import ReadMore from '../../components/globals/read-more'
 import Button from '../../components/globals/button'
+import { useSearchedData } from '../../lib/store'
+import { set } from 'date-fns'
 type Props = {}
 const ScreenWidth=Dimensions.get("screen").width
 const ScreenHeight=Dimensions.get("screen").height
@@ -27,15 +29,29 @@ const SearchedDistination = (props: Props) => {
     const{data,isLoading}=useSearchPhoto({query:params.dest_id as string});
     const [pageindex,setPageIndex]=useState(0);
     const [currentPageIndex,setCurrentpageindex]=useState<number>(0)
-    // console.log(data)
+    const {data:hotels,dest_id,destination}=useSearchedData()
+    const [bestHotelIndex,setBestHotelIndex]=useState<number>(0);  
+    console.log("hotels",hotels,dest_id,destination)
 
-    //tab view logic 
-    const pagerViewRef=useRef(null)
-    
-
+  //best hotel in the list:
+  useMemo(()=>{
+    var reviewScore=0;
+    var BestIndex=0;
+    hotels.map((item,index)=>{
+      console.log(item.reviewScore);
+      if(item.property.reviewScore>reviewScore){
+        BestIndex=index;
+        reviewScore=item.property.reviewScore;
+      }
+    })
+    setBestHotelIndex(BestIndex);
+  },[bestHotelIndex])
+  console.log("best hotel index",bestHotelIndex)
+  //tab view logic 
+  const pagerViewRef=useRef(null)
   console.log(pageindex)
   return (
-    <SafeAreaView style={{flex:1,backgroundColor:COLORS.white}}>
+    <SafeAreaView style={{flex:1,backgroundColor:COLORS.white,width:"100%"}}>
       <View style={styles.destinationView} >
         {
           isLoading?(
@@ -50,6 +66,7 @@ const SearchedDistination = (props: Props) => {
             autoplayLoop={true}
             autoplayLoopKeepAnimation={true}
             autoplayDelay={3}
+            style={{width:"100%"}}
             renderItem={({ item,index }) => (
               <Image source={{uri:item.urls.regular}} width={ScreenWidth}  style={{ borderBottomLeftRadius:30,
               borderBottomRightRadius:30,}} />
@@ -59,7 +76,7 @@ const SearchedDistination = (props: Props) => {
               <Text style={{textAlign:"center",fontFamily:FONT.medium,fontSize:SIZES.xLarge,textTransform:"capitalize",color:COLORS.white}}>
                 {params.dest_id as string}
               </Text>
-              <Rates text={searchDestination.hotels  } iconName='hotel' />
+              <Rates text={hotels.length.toString()} iconName='hotel' />
             </View>
             </>
           ):(
@@ -89,7 +106,7 @@ const SearchedDistination = (props: Props) => {
             <AnimatPager style={{justifyContent:"center",alignItems:"center",width:'auto',height:ScreenHeight}} initialPage={0} ref={pagerViewRef}>
               <ScrollView contentContainerStyle={styles.page}  showsVerticalScrollIndicator={false} key="1">
                 <View style={{marginHorizontal:30,marginVertical:10,flexDirection:"row",gap:20,alignItems:"center"}}>
-                  <HotelCard hotelImage={hotel.photoUrls} hotelName={hotel.name} reviewScore={hotel.reviewScore} />
+                  <HotelCard hotelImage={hotels[bestHotelIndex].property.photoUrls[0]} hotelName={hotels[bestHotelIndex].property.name} reviewScore={hotels[bestHotelIndex].property.reviewScore} />
                   {data && <ImagesCard mainImage={data.results[0].urls.regular} number={10} />}
                 </View>
                 <View style={{marginHorizontal:10}} >
@@ -123,6 +140,7 @@ const styles = StyleSheet.create<any>({
     height:ScreenHeight/2.5,
     justifyContent:"center",
     alignItems:"center",
+    width:"100%"
   },
   destinationImage:{
     borderBottomLeftRadius:30,

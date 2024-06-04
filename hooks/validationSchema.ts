@@ -9,8 +9,8 @@ export function validationSchema() {
   }
 
 export const  validateSearchDistinationSchema= z.object({
-    location:z.string().min(1,"please valid The location !!"),
-    arrival_date:z.string().min(1,"please valid your arrival date !!"),
-    departure_date:z.string().min(1,"please valid your departure date !!"),
-    adults:z.string().min(1,"please how many person you are ?")
+    location:z.string().min(1,"Please check The location !!"),
+    arrival_date:z.string().min(1,"Please check your arrival date !!"),
+    departure_date:z.string().min(1,"Please check your departure date !!"),
+    adults:z.string().min(1,"How many person you are ?")
 })

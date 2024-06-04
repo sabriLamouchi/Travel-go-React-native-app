@@ -25,21 +25,25 @@ const Login = () => {
                 setIsSubmit(true);
                 const res=await appSignIn(formValue.email,formValue.password);
                 if(res?.status){
-                    console.log("go in")
+                    router.replace("/(tabs)/home")
                 }
                 else{
-                    console.log("error",res)
-                    toast("error", {
-                        duration: 4000,
+                    
+                    console.log("error", res.error.message)
+                    toast(res.error.message.includes("(auth/invalid-credential)")
+                    ? "Email or Password is incirrect" : res.error.message , {
+                        duration: 3000,
                         position: ToastPosition.TOP,
                         icon: '📣',
                         styles: {
                         view:{
                             ...ToastErrorTheme,
-                            marginTop:100,
+                            flexDirection:"row",
+                            justifyContent:"center",
                         },
                         text:{
-                            fontFamily:FONT.medium
+                            fontFamily:FONT.medium,
+                            color:COLORS.white
                         },
                         },
 

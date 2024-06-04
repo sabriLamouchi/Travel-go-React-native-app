@@ -42,7 +42,7 @@ export const appSignIn=async(email:string,password:string)=>{
             })
         return user && {status:true};
     } catch (error) {
-        return{status:false}
+        return{status:false, error}
     }
 }
 

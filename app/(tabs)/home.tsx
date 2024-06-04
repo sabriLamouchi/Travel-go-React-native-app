@@ -34,33 +34,6 @@ export default function HomeScreen({navigation}){
     const{setData,setDestId,dest_id,data,destination,setDestination}=useSearchedData()
     //InputState//
     const [location,setLocation]=useState<string>("");
-    // useMemo(async ()=>
-    //     {
-    //         if(location!=null){
-                
-    //             if(location.length>1){
-    //                 try {
-    //                     // const {res}=await useSearchDistination({query:location});
-    //                     // console.log([...res.data])
-    //                     // console.log(location)
-    //                     // return res
-    //                 } catch (error) {
-    //                     console.log(error)
-    //                 }
-    //             }else {
-    //                 alert("please enter the location!!");
-    //                 return null
-    //             }
-                
-    //         }
-    //         else {
-    //             alert("please enter the location!!");
-    //             return null
-    //         }
-    //     }
-    // ,[location])
-
-
     const handlePickDate=()=>{
         setPickDate(!pickDate);
         console.log(format(arrivalDate,"yyyy-MM-dd"),format(departureDate,"yyyy-MM-dd"))
@@ -209,7 +182,7 @@ export default function HomeScreen({navigation}){
                         })
                     }else{
                         toast("search get with success!!",{
-                            duration: 6000,
+                            duration: 4000,
                             position: ToastPosition.TOP,
                             icon: '📣',
                             styles: {
@@ -226,13 +199,13 @@ export default function HomeScreen({navigation}){
             }catch(error){
                 console.log("error",error)
                 throw error
+                
             }
             finally{
                 setIsSearching(false);
             }
         }
         else{
-            console.log()
             result.error.issues.forEach((err,index)=>{
                 toast(err.message, {
                     duration: 2000+(index*1000),
@@ -246,8 +219,13 @@ export default function HomeScreen({navigation}){
                     },
                 });
             })
+            
 
         }
+        if (dest_id==null || data==null || data?.length==0){
+            return false;
+        }
+        return true;
         
     }
     return( 
@@ -325,7 +303,11 @@ export default function HomeScreen({navigation}){
                                 }
                                 disabled={isSearching} 
                                 onPress={async ()=>{
-                                    await handleSearchDistination().then(()=>{
+                                    await handleSearchDistination().then((res)=>{
+                                        console.log("res",res);
+                                        if(res){
+                                            router.push(`/(search)/${destination}`);
+                                        }
                                     })
                                     
                                 }}>

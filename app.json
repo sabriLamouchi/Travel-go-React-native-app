@@ -9,6 +9,7 @@
     ],
     "name": "travel-go",
     "slug": "travel-go",
+    "orientation": "portrait",
     "android": {
       "package": "com.sabri_lamouchi.travelgo"
     },
