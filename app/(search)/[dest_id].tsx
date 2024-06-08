@@ -1,6 +1,6 @@
-import { ActivityIndicator, Dimensions, FlatList, Image, ImageStyle, SafeAreaView, ScrollView, StatusBar, StyleProp, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Dimensions, FlatList, Image, ImageStyle, Modal, SafeAreaView, ScrollView, StatusBar, StyleProp, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useMemo, useRef, useState } from 'react'
-import { useLocalSearchParams } from 'expo-router'
+import { Link, useLocalSearchParams } from 'expo-router'
 import { searchDestination } from '../../constants/data'
 import { COLORS, FONT, SIZES } from '../../constants'
 import useSearchPhoto from '../../hooks/useSearchPhoto'
@@ -31,6 +31,7 @@ const SearchedDistination = (props: Props) => {
     const [currentPageIndex,setCurrentpageindex]=useState<number>(0)
     const {data:hotels,dest_id,destination}=useSearchedData()
     const [bestHotelIndex,setBestHotelIndex]=useState<number>(0);  
+    const [isModalVisible,setIsModalVisible]=useState(false);
     console.log("hotels",hotels,dest_id,destination)
 
   //best hotel in the list:
@@ -52,7 +53,8 @@ const SearchedDistination = (props: Props) => {
   console.log(pageindex)
   return (
     <SafeAreaView style={{flex:1,backgroundColor:COLORS.white,width:"100%"}}>
-      <View style={styles.destinationView} >
+      <StatusBar barStyle="default" hidden={true} />
+      <View style={styles.destinationView}>
         {
           isLoading?(
             <ActivityIndicator color={COLORS.green} size="large" />
@@ -66,10 +68,9 @@ const SearchedDistination = (props: Props) => {
             autoplayLoop={true}
             autoplayLoopKeepAnimation={true}
             autoplayDelay={3}
-            style={{width:"100%"}}
             renderItem={({ item,index }) => (
-              <Image source={{uri:item.urls.regular}} width={ScreenWidth}  style={{ borderBottomLeftRadius:30,
-              borderBottomRightRadius:30,}} />
+            <Image source={{uri:item.urls.regular}} width={ScreenWidth}   style={{ borderBottomLeftRadius:15,
+            borderBottomRightRadius:15,}} />
             )}
             />
             <View style={styles.destinationTitle}>
@@ -106,13 +107,15 @@ const SearchedDistination = (props: Props) => {
             <AnimatPager style={{justifyContent:"center",alignItems:"center",width:'auto',height:ScreenHeight}} initialPage={0} ref={pagerViewRef}>
               <ScrollView contentContainerStyle={styles.page}  showsVerticalScrollIndicator={false} key="1">
                 <View style={{marginHorizontal:30,marginVertical:10,flexDirection:"row",gap:20,alignItems:"center"}}>
-                  <HotelCard hotelImage={hotels[bestHotelIndex].property.photoUrls[0]} hotelName={hotels[bestHotelIndex].property.name} reviewScore={hotels[bestHotelIndex].property.reviewScore} />
-                  {data && <ImagesCard mainImage={data.results[0].urls.regular} number={10} />}
+                  <HotelCard hotelImage={hotels[bestHotelIndex].property.photoUrls[0]} hotelName={hotels[bestHotelIndex].property.name} reviewScore={hotels[bestHotelIndex].property.reviewScore} hotelId={hotels[bestHotelIndex].property.id} />
+                  {/* <Link href="/hotelsModal"> */}
+                  {data && <ImagesCard mainImage={data.results[0].urls.regular} onclick={()=>{setIsModalVisible(true)}} number={hotels.length} />}
+                  {/* </Link> */}
                 </View>
                 <View style={{marginHorizontal:10}} >
                   <Text style={{fontFamily:FONT.bold,fontSize:SIZES.small}} > Details </Text>
                   <ReadMore maxChar={100} textStyle={{marginTop:10,fontFamily:FONT.light,fontSize:SIZES.small,marginLeft:10}}  >
-                     {hotel.accessibilityLabel}
+                     {hotels[bestHotelIndex].accessibilityLabel}
                   </ReadMore>
                 </View>
               </ScrollView>
@@ -125,10 +128,30 @@ const SearchedDistination = (props: Props) => {
             </AnimatPager>
             <Button style={{width:"30%",height:50,alignSelf:"center",bottom:380,position:"absolute"}} textStyle={{fontSize:SIZES.medium}} >
                   Continue
-                </Button>
+            </Button>
           </View>
         </View>
       </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => setIsModalVisible(false)}
+
+        >
+        <View style={{height:ScreenHeight*0.6,backgroundColor:COLORS.primary,bottom:0,position:"absolute",left:0,right:0, borderTopLeftRadius:30,borderTopRightRadius:30}}>
+        <TouchableOpacity onPress={()=>setIsModalVisible(false)} style={{ width: '100%', height: 'auto', backgroundColor:COLORS.lightSecondary,justifyContent:"center",alignItems:"center",padding:10,borderTopEndRadius:30,borderTopStartRadius:30 }}>
+          <Text style={{ fontSize:SIZES.large, fontWeight: "bold",color:COLORS.white }}>Hotels</Text>
+         </TouchableOpacity>
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ justifyContent:"center",alignItems:"center",flexDirection:"row",flexWrap:"wrap",rowGap:20,columnGap:20,marginTop:10 }}>
+            {
+                hotels.map((item,index)=>(
+                    <HotelCard hotelImage={hotels[index].property.photoUrls[0]} hotelName={hotels[index].property.name} reviewScore={hotels[index].property.reviewScore} hotelId={hotels[index].property.id} />
+                ))
+            }
+          </ScrollView>
+        </View>
+      </Modal>
     </SafeAreaView>
   )
 }
@@ -137,10 +160,14 @@ export default SearchedDistination
 
 const styles = StyleSheet.create<any>({
   destinationView:{
-    height:ScreenHeight/2.5,
+    height:ScreenHeight*0.45,
     justifyContent:"center",
     alignItems:"center",
-    width:"100%"
+    width:"100%",
+    zIndex:-1,
+    borderBottomLeftRadius:30,
+    borderBottomRightRadius:30,
+
   },
   destinationImage:{
     borderBottomLeftRadius:30,

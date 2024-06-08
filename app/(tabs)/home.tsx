@@ -236,7 +236,7 @@ export default function HomeScreen({navigation}){
                     isSearching &&
                     <BlurView intensity={10} tint="light" style={styles.loadingScreen} >
                     <ActivityIndicator size={"large"} color={COLORS.secondary} />
-                </BlurView> 
+                    </BlurView> 
                 }
                 <View style={{width:"100%",height:ScreenDimensions.height/2.6}}>
                     <ScrollView  contentContainerStyle={{rowGap:15,height:"auto",paddingTop:"10%"}}  showsVerticalScrollIndicator={false}  >

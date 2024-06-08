@@ -5,10 +5,17 @@ import Header from '../../components/header/header'
 import { COLORS } from '../../constants'
 const _layout = () => {
   return (
-      <Stack screenOptions={{
+      <Stack initialRouteName='[dest_id]' screenOptions={{
         header:()=><Header/>,
         headerTransparent:true
-      }}/>
+      }}>
+        <Stack.Screen name="[dest_id]"/>
+        <Stack.Screen name="hotelsModal" 
+        options={{
+          headerShown:false,
+          presentation: 'modal',
+        }}/>
+      </Stack>
   )
 }
 
