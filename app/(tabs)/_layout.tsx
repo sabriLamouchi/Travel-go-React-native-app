@@ -10,7 +10,7 @@ import { COLORS, FONT, images, SIZES } from '../../constants';
 import { useTabBarScroll } from '../../hooks/useTabBarScroll';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 // Create a client
-const queryClient = new QueryClient()
+export const queryClient = new QueryClient()
 const TabLayout =() => {
     const router =useRouter();
     const segments=useSegments();

@@ -108,7 +108,6 @@ interface DestinationProps{
     setDestination:(dest)=>set(()=>({destination:dest}))
   })
   )
-
   export const GetDistinationId=async(location:string | null ):Promise<string> |null=>{
     const options = {
         method: 'GET',
@@ -169,4 +168,42 @@ interface DestinationProps{
     }
   }
 
+//search Hotel Details:
+interface HotelDetailsProps{
+    hotelsDetails:any[] |null,
+    setHotelsDetails?:(hotelsDetails:any[])=>void
+}
+export const useHotelDetails=create<HotelDetailsProps>((set)=>({
+    hotelsDetails:null,
+    setHotels:(hotelsDetails)=>set(()=>({setHotelsDetails:hotelsDetails}))
+}))
+
+
+export const GetHotelDetails=async(hotel_id:string|string[],arrival_date:string,departure_date:string):Promise<any>|null=>{
+    const options = {
+        method: 'GET',
+        url: 'https://booking-com15.p.rapidapi.com/api/v1/hotels/getHotelDetails',
+        params: {
+          hotel_id: hotel_id,
+          arrival_date: arrival_date,
+          departure_date: departure_date,
+          languagecode: 'en-us',
+          currency_code: 'USDT',
+        },
+        headers: {
+          'x-rapidapi-key': process.env.EXPO_PUBLIC_RAPID_API_KEY,
+          'x-rapidapi-host': 'booking-com15.p.rapidapi.com'
+        }
+      };
+
+    try {
+        const response = await axios.request(options);
+        console.log(response.data.data);
+        return response?.data.data
+    } catch (error) {
+        console.error(error);
+        return error;
+    }
+   
+}
   
