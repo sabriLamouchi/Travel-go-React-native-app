@@ -179,7 +179,7 @@ export const useHotelDetails=create<HotelDetailsProps>((set)=>({
 }))
 
 
-export const GetHotelDetails=async(hotel_id:string|string[],arrival_date:string,departure_date:string):Promise<any>|null=>{
+export const GetHotelDetails=async(hotel_id:string,arrival_date:string,departure_date:string):Promise<any>|null=>{
     const options = {
         method: 'GET',
         url: 'https://booking-com15.p.rapidapi.com/api/v1/hotels/getHotelDetails',
@@ -188,7 +188,6 @@ export const GetHotelDetails=async(hotel_id:string|string[],arrival_date:string,
           arrival_date: arrival_date,
           departure_date: departure_date,
           languagecode: 'en-us',
-          currency_code: 'USDT',
         },
         headers: {
           'x-rapidapi-key': process.env.EXPO_PUBLIC_RAPID_API_KEY,

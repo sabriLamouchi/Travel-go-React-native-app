@@ -28,6 +28,7 @@ export default function Index() {
         }else if(isLoggedIn){
             //go to tabs route
             router.replace("/(tabs)/home")
+            // router.replace("/(sreach)/(hotelDetail)/123")
             console.log("redirected to  tabs page")
         }
     },[segments,navigationState?.key,initialized]

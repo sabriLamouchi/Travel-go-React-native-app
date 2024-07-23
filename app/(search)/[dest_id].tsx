@@ -136,8 +136,7 @@ const SearchedDistination = (props: Props) => {
         animationType="slide"
         transparent={true}
         visible={isModalVisible}
-        onRequestClose={() => setIsModalVisible(false)}
-
+        onRequestClose={() => setIsModalVisible(!isModalVisible)}
         >
         <View style={{height:ScreenHeight*0.6,backgroundColor:COLORS.primary,bottom:0,position:"absolute",left:0,right:0, borderTopLeftRadius:30,borderTopRightRadius:30}}>
         <TouchableOpacity onPress={()=>setIsModalVisible(false)} style={{ width: '100%', height: 'auto', backgroundColor:COLORS.lightSecondary,justifyContent:"center",alignItems:"center",padding:10,borderTopEndRadius:30,borderTopStartRadius:30 }}>
@@ -145,9 +144,9 @@ const SearchedDistination = (props: Props) => {
          </TouchableOpacity>
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ justifyContent:"center",alignItems:"center",flexDirection:"row",flexWrap:"wrap",rowGap:20,columnGap:20,marginTop:10 }}>
             {
-                hotels.map((item,index)=>(
-                    <HotelCard hotelImage={hotels[index].property.photoUrls[0]} hotelName={hotels[index].property.name} reviewScore={hotels[index].property.reviewScore} hotelId={hotels[index].property.id} />
-                ))
+              hotels.map((item,index)=>(
+                  <HotelCard hotelImage={hotels[index].property.photoUrls[0]} hotelName={hotels[index].property.name} reviewScore={hotels[index].property.reviewScore} hotelId={hotels[index].property.id} />
+              ))
             }
           </ScrollView>
         </View>
